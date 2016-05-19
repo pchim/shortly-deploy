@@ -1,4 +1,5 @@
 var db = require('../config');
+var Schema = db.Schema;
 var crypto = require('crypto');
 
 let linkSchema = new Schema({
@@ -7,7 +8,7 @@ let linkSchema = new Schema({
   code: String,
   title: String,
   visits: {type: Number, default: 0}
-  }
+  },
   {timestamps: true}
 );
 
