@@ -5,7 +5,7 @@ let Promise = require('bluebird');
 
 let userSchema = new Schema({
   username: {type: String, unique: true},
-  password: String,
+  password: String 
 },
 {
   timestamps: true
@@ -25,7 +25,11 @@ userSchema.methods.hashPassword = function() {
       this.set('password', hash);
     });
 };
-userSchema.queue('hashPassword');
+userSchema.pre('save', function(next){
+  this.hashPassword;
+  if (next) {
+    next();
+  }}); 
 
 let User = db.model('User', userSchema);
 

@@ -105,16 +105,20 @@ describe('', function() {
 
       it('Returns the same shortened code if attempted to add the same URL twice', function(done) {
         var firstCode = link.code;
-        request(app)
-          .post('/links')
-          .send({
-            'url': 'http://www.roflzoo.com/'})
-          .expect(200)
-          .expect(function(res) {
-            var secondCode = res.body.code;
-            expect(secondCode).to.equal(firstCode);
-          })
-          .end(done);
+        Link.remove({url: 'http://www.roflzoo.com/'}).exec(
+          function() {
+            request(app)
+              .post('/links')
+              .send({
+                'url': 'http://www.roflzoo.com/'})
+              .expect(200)
+              .expect(function(res) {
+                var secondCode = res.body.code;
+                console.log('sc: ', secondCode);
+                expect(secondCode).to.equal(firstCode);
+              })
+              .end(done);            
+          });
       });
 
       it('Shortcode redirects to correct url', function(done) {
@@ -133,7 +137,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  describe('Priviledged Access:', function() {
+  xdescribe('Priviledged Access:', function() {
 
     // /*  Authentication  */
     // // TODO: xit out authentication

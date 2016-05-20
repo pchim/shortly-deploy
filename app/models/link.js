@@ -7,19 +7,21 @@ let linkSchema = new Schema({
   baseUrl: String,
   code: String,
   title: String,
-  visits: {type: Number, default: 0}
-  },
+  visits: {type: Number, default: 0}},
   {timestamps: true}
 );
 
-linkSchema.tableName = 'urls';
-linkSchema.hasTimestamps = true;
 linkSchema.methods.hashLink = function() {
       var shasum = crypto.createHash('sha1');
-      shasum.update(this.get('url'));
-      this.set('code', shasum.digest('hex').slice(0, 5));
+      shasum.update(this.url);
+      this.code = shasum.digest('hex').slice(0, 5);
     };
-linkSchema.queue('hashLink');    
+linkSchema.pre('save', function(next){
+  this.hashLink();
+  if (next) {
+    next();
+  }});    
+
 
 let Link = db.model('Url', linkSchema);
 
