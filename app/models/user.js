@@ -11,25 +11,33 @@ let userSchema = new Schema({
   timestamps: true
 });
 
-userSchema.tableName = 'users';
-userSchema.hasTimestamps = true;
 userSchema.methods.comparePassword = function(attemptedPassword, callback) {
-  bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
+  var hash = this.password;
+  bcrypt.compare(attemptedPassword, hash, function(err, isMatch) {
     callback(isMatch);
-  });
+  }).bind(this);
 };
-userSchema.methods.hashPassword = function() {
+userSchema.methods.hashPassword = function(next) {
   var cipher = Promise.promisify(bcrypt.hash);
-  return cipher(this.get('password'), null, null).bind(this)
+  return cipher(this.password, null, null).bind(this)
     .then(function(hash) {
-      this.set('password', hash);
+      this.password = hash;
+      next();
     });
 };
+
 userSchema.pre('save', function(next){
-  this.hashPassword;
-  if (next) {
-    next();
-  }}); 
+
+  this.hashPassword(next);
+
+  // if (next) {
+  //   this.hashPassword(next);
+  // } else {
+  //   this.hashPassword();
+  // }
+
+
+}); 
 
 let User = db.model('User', userSchema);
 

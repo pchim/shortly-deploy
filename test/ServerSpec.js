@@ -137,7 +137,7 @@ describe('', function() {
 
   }); // 'Link creation'
 
-  xdescribe('Priviledged Access:', function() {
+  describe('Priviledged Access:', function() {
 
     // /*  Authentication  */
     // // TODO: xit out authentication
